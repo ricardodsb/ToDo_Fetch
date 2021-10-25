@@ -1,35 +1,45 @@
 import React, { useState, useEffect } from "react";
 
-useEffect(() => {
-	fetch("https://assets.breatheco.de/apis/fake/todos/user/ricardodsb", {
-		method: "GET",
-		body: JSON.stringify(inputList),
-		headers: {
-			"Content-Type": "application/json"
-		}
-	})
-		.then(resp => {
-			console.log(resp.ok); // Será true (verdad) si la respuesta es exitosa.
-			console.log(resp.status); // el código de estado = 200 o código = 400 etc.
-			return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
-		})
-		.then(data => {
-			//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
-			console.log(data); //esto imprimirá en la consola el objeto exacto recibido del servidor
-		})
-		.catch(error => {
-			//manejo de errores
-			console.log(error);
-		});
-}, []);
-
 const Todo = () => {
 	const [inputTask, setInputTask] = useState("");
 	const [inputList, setInputList] = useState([]);
 
+	useEffect(() => {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/ricardodsb", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(resp => {
+				console.log(resp.ok); // Será true (verdad) si la respuesta es exitosa.
+				console.log(resp.status); // el código de estado = 200 o código = 400 etc.
+				return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+			})
+			.then(data => {
+				//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
+				setInputList(data);
+			})
+			.catch(error => {
+				//manejo de errores
+				console.log(error);
+			});
+	}, []);
+
+	const updateList = list => {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/ricardodsb", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(list)
+		});
+	};
+
 	function delItem(index) {
 		let setInput = inputList.filter((inputTask, i) => i !== index);
 		setInputList(setInput);
+		updateList(setInput);
 	}
 	function addItem(e) {
 		if (e.keyCode == 13) {
@@ -37,6 +47,7 @@ const Todo = () => {
 			const list = inputList.concat({ label: inputTask, done: false });
 			setInputList(list);
 			setInputTask("");
+			updateList(list);
 		}
 	}
 	return (
