@@ -37,19 +37,37 @@ const Todo = () => {
 	};
 
 	let delItem = index => {
-		let setInput = inputList.filter((inputTask, i) => i !== index);
-		setInputList(setInput);
+		// if (inputList.length > 1) {
+		let newInputList = inputList.filter((inputTask, i) => i !== index);
+		setInputList(newInputList);
+		updateList(newInputList);
+		// }
+	};
+	const checkIfTaskIsRepeated = newTask => {
+		let isRepeated = false;
+		inputList.forEach(task => {
+			if (task.label === newTask) {
+				isRepeated = true;
+			}
+		});
+		console.log({ isRepeated, inputList, newTask });
+		return isRepeated;
 	};
 	let addItem = e => {
 		if (e.keyCode == 13) {
-			setInputTask(inputTask);
 			if (!inputTask) {
 				alert("You need to insert a task");
-				list(false);
+				return;
+			}
+			if (checkIfTaskIsRepeated(inputTask)) {
+				console.log(checkIfTaskIsRepeated);
+				alert("You can´t insert the same task twice");
+				return;
 			}
 			const list = inputList.concat({ label: inputTask, done: false });
 			setInputList(list);
 			setInputTask("");
+			updateList(list);
 		}
 	};
 	return (
@@ -64,19 +82,15 @@ const Todo = () => {
 			/>
 			<div id="listbar">
 				{inputList.map((todo, i) => (
-					<>
-						<li key={todo}>
-							{todo.label}
-							<button
-								className="btn btn-danger"
-								id="delete"
-								onClick={() => delItem(i)}>
-								<i
-									className="fa fa-times"
-									aria-hidden="true"></i>
-							</button>
-						</li>
-					</>
+					<li key={todo}>
+						{todo.label}
+						<button
+							className="btn btn-danger"
+							id="delete"
+							onClick={() => delItem(i)}>
+							<i className="fa fa-times" aria-hidden="true"></i>
+						</button>
+					</li>
 				))}
 				<div className="row">
 					<div className="col mx-auto">
