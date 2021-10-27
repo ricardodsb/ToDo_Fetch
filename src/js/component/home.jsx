@@ -37,11 +37,12 @@ const Todo = () => {
 	};
 
 	let delItem = index => {
-		// if (inputList.length > 1) {
 		let newInputList = inputList.filter((inputTask, i) => i !== index);
 		setInputList(newInputList);
 		updateList(newInputList);
-		// }
+		if (inputList.length == 0) {
+			inputList.map({ label: "Sample Task", done: false });
+		}
 	};
 	const checkIfTaskIsRepeated = newTask => {
 		let isRepeated = false;
@@ -50,7 +51,6 @@ const Todo = () => {
 				isRepeated = true;
 			}
 		});
-		console.log({ isRepeated, inputList, newTask });
 		return isRepeated;
 	};
 	let addItem = e => {
@@ -60,7 +60,6 @@ const Todo = () => {
 				return;
 			}
 			if (checkIfTaskIsRepeated(inputTask)) {
-				console.log(checkIfTaskIsRepeated);
 				alert("You can´t insert the same task twice");
 				return;
 			}
