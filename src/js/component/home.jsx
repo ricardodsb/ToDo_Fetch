@@ -37,12 +37,11 @@ const Todo = () => {
 	};
 
 	let delItem = index => {
-		let newInputList = inputList.filter((inputTask, i) => i !== index);
-		setInputList(newInputList);
-		updateList(newInputList);
-		if (inputList.length == 0) {
-			inputList.map({ label: "Sample Task", done: false });
-		}
+		let updateInputlist = [...inputList];
+		updateInputlist[index].done = true;
+		setInputList(updateInputlist);
+		updateList(inputList);
+		console.log(updateInputlist);
 	};
 	const checkIfTaskIsRepeated = newTask => {
 		let isRepeated = false;
@@ -80,21 +79,28 @@ const Todo = () => {
 				onKeyUp={addItem}
 			/>
 			<div id="listbar">
-				{inputList.map((todo, i) => (
-					<li key={todo}>
-						{todo.label}
-						<button
-							className="btn btn-danger"
-							id="delete"
-							onClick={() => delItem(i)}>
-							<i className="fa fa-times" aria-hidden="true"></i>
-						</button>
-					</li>
-				))}
+				{inputList.map((todo, i) => {
+					if (!todo.done) {
+						return (
+							<li key={i}>
+								{todo.label}
+								<button
+									className="btn btn-danger"
+									id="delete"
+									onClick={() => delItem(i)}>
+									<i
+										className="fa fa-times"
+										aria-hidden="true"></i>
+								</button>
+							</li>
+						);
+					}
+				})}
 				<div className="row">
 					<div className="col mx-auto">
 						<ul className="list-group">
-							{inputList.length == 0 ? (
+							{inputList.filter(todo => !todo.done).length ==
+							0 ? (
 								<li className="list-group-item">
 									Add your task...
 								</li>
@@ -104,7 +110,8 @@ const Todo = () => {
 							<li
 								id="last"
 								className="list-group text-muted text-start counter">
-								{inputList.length} Items left
+								{inputList.filter(todo => !todo.done).length}{" "}
+								Items left
 							</li>
 						</ul>
 					</div>
